@@ -1,0 +1,13 @@
+# Node
+node_modules/
+.env
+dist/
+out/
+.vscode-test/
+.vscode/
+
+# React build
+build/
+
+# VSIX
+*.vsix
