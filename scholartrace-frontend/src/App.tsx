@@ -8,7 +8,11 @@ type LogEntry = {
   content: string;
 };
 
-const BASE_URL = 'https://scholartrace.onrender.com'; // ✅ Replace localhost with Render backend
+// Determine API base URL
+const API_BASE_URL =
+  window.location.hostname === 'localhost'
+    ? 'http://localhost:5000'
+    : 'https://scholartrace.onrender.com'; // <- your backend render URL
 
 export default function App() {
   const [email, setEmail] = useState(localStorage.getItem('lastEmail') || '');
@@ -23,7 +27,7 @@ export default function App() {
   const handleLogin = async () => {
     try {
       const res = await axios.post<{ token: string; username: string }>(
-        `${BASE_URL}/api/auth/login`,
+        `${API_BASE_URL}/api/auth/login`,
         { username, password }
       );
       localStorage.setItem('authToken', res.data.token);
@@ -51,7 +55,7 @@ export default function App() {
 
     try {
       const response = await axios.get<LogEntry[]>(
-        `${BASE_URL}/api/logs/${encodeURIComponent(email)}`
+        `${API_BASE_URL}/api/logs/${encodeURIComponent(email)}`
       );
       setLogs(response.data);
     } catch (error) {
@@ -167,10 +171,7 @@ export default function App() {
           Fetch Logs
         </button>
         {logs.length > 0 && (
-          <button
-            onClick={handleExportLogs}
-            style={{ ...buttonStyle, marginLeft: 10, backgroundColor: '#27ae60' }}
-          >
+          <button onClick={handleExportLogs} style={{ ...buttonStyle, marginLeft: 10, backgroundColor: '#27ae60' }}>
             Export Logs
           </button>
         )}
@@ -187,7 +188,9 @@ export default function App() {
       )}
 
       {loading && <p style={{ marginTop: 20 }}>🔄 Loading logs...</p>}
-      {!loading && logs.length === 0 && <p style={{ marginTop: 20 }}>⚠️ No logs found for this email.</p>}
+      {!loading && logs.length === 0 && (
+        <p style={{ marginTop: 20 }}>⚠️ No logs found for this email.</p>
+      )}
 
       <div style={{ marginTop: 20 }}>
         <LogViewer logs={filteredLogs} />
