@@ -8,6 +8,8 @@ type LogEntry = {
   content: string;
 };
 
+const BASE_URL = 'https://scholartrace.onrender.com'; // ✅ Replace localhost with Render backend
+
 export default function App() {
   const [email, setEmail] = useState(localStorage.getItem('lastEmail') || '');
   const [logs, setLogs] = useState<LogEntry[]>([]);
@@ -21,7 +23,7 @@ export default function App() {
   const handleLogin = async () => {
     try {
       const res = await axios.post<{ token: string; username: string }>(
-        'http://localhost:5000/api/auth/login',
+        `${BASE_URL}/api/auth/login`,
         { username, password }
       );
       localStorage.setItem('authToken', res.data.token);
@@ -48,7 +50,9 @@ export default function App() {
     localStorage.setItem('lastEmail', email);
 
     try {
-      const response = await axios.get<LogEntry[]>(`http://localhost:5000/api/logs/${encodeURIComponent(email)}`);
+      const response = await axios.get<LogEntry[]>(
+        `${BASE_URL}/api/logs/${encodeURIComponent(email)}`
+      );
       setLogs(response.data);
     } catch (error) {
       console.error('Error fetching logs:', error);
@@ -163,7 +167,10 @@ export default function App() {
           Fetch Logs
         </button>
         {logs.length > 0 && (
-          <button onClick={handleExportLogs} style={{ ...buttonStyle, marginLeft: 10, backgroundColor: '#27ae60' }}>
+          <button
+            onClick={handleExportLogs}
+            style={{ ...buttonStyle, marginLeft: 10, backgroundColor: '#27ae60' }}
+          >
             Export Logs
           </button>
         )}
@@ -180,9 +187,7 @@ export default function App() {
       )}
 
       {loading && <p style={{ marginTop: 20 }}>🔄 Loading logs...</p>}
-      {!loading && logs.length === 0 && (
-        <p style={{ marginTop: 20 }}>⚠️ No logs found for this email.</p>
-      )}
+      {!loading && logs.length === 0 && <p style={{ marginTop: 20 }}>⚠️ No logs found for this email.</p>}
 
       <div style={{ marginTop: 20 }}>
         <LogViewer logs={filteredLogs} />
