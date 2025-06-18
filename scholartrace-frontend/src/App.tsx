@@ -8,6 +8,12 @@ type LogEntry = {
   content: string;
 };
 
+// Determine API base URL
+const API_BASE_URL =
+  window.location.hostname === 'localhost'
+    ? 'http://localhost:5000'
+    : 'https://scholartrace.onrender.com'; // <- your backend render URL
+
 export default function App() {
   const [email, setEmail] = useState(localStorage.getItem('lastEmail') || '');
   const [logs, setLogs] = useState<LogEntry[]>([]);
@@ -21,7 +27,7 @@ export default function App() {
   const handleLogin = async () => {
     try {
       const res = await axios.post<{ token: string; username: string }>(
-        'http://localhost:5000/api/auth/login',
+        `${API_BASE_URL}/api/auth/login`,
         { username, password }
       );
       localStorage.setItem('authToken', res.data.token);
@@ -48,7 +54,9 @@ export default function App() {
     localStorage.setItem('lastEmail', email);
 
     try {
-      const response = await axios.get<LogEntry[]>(`http://localhost:5000/api/logs/${encodeURIComponent(email)}`);
+      const response = await axios.get<LogEntry[]>(
+        `${API_BASE_URL}/api/logs/${encodeURIComponent(email)}`
+      );
       setLogs(response.data);
     } catch (error) {
       console.error('Error fetching logs:', error);

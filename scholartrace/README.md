@@ -1,71 +1,52 @@
-# scholartrace README
+# 📘 ScholarTrace
 
-This is the README for your extension "scholartrace". After writing up a brief description, we recommend including the following sections.
+ScholarTrace is a VS Code extension designed to help students transparently track their coding progress and submit logs to professors, ensuring academic integrity and protecting against false accusations.
 
-## Features
+## ✨ Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+- ⏱️ Automatically logs file changes after brief pauses
+- 💾 Locally stores code change history with timestamps
+- 📤 Sends log history to a secure backend for professor access
+- 📄 Export logs to a nicely formatted HTML file
+- 🔐 Professors can securely view and filter student logs via a web dashboard
 
-For example if there is an image subfolder under your extension project workspace:
+## 🎓 Why ScholarTrace?
 
-\!\[feature X\]\(images/feature-x.png\)
+Students often face the risk of academic dishonesty accusations due to lack of evidence for their independent work. ScholarTrace helps prevent this by logging your code evolution and optionally submitting it securely for verification.
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+## 🛠 How It Works
 
-## Requirements
+1. **Install the extension in VS Code**
+2. **Start coding normally**
+3. **Logs will be saved automatically after pauses (5 seconds default)**
+4. Use `ScholarTrace: Export ScholarTrace Log` to export your work
+5. Use `ScholarTrace: Send Logs to Server` to upload for review
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+## 🧪 Commands
 
-## Extension Settings
+| Command                              | Description                           |
+|--------------------------------------|---------------------------------------|
+| `ScholarTrace: Export ScholarTrace Log` | Save logs to an HTML file             |
+| `ScholarTrace: Send Logs to Server` | Upload logs with student email input  |
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+## 📦 Requirements
 
-For example:
+- VS Code 1.101.0 or higher
+- Internet connection to use the log upload feature
 
-This extension contributes the following settings:
+## 🔒 Privacy
 
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+Your logs are stored locally unless you choose to upload them to your institution's ScholarTrace backend. No data is collected without your explicit consent.
 
-## Known Issues
+## 🧑‍🏫 For Professors
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+Visit the ScholarTrace dashboard to view logs by student email, search content, and export records.
 
-## Release Notes
+## 📤 Open Source & Contributions
 
-Users appreciate release notes as you update your extension.
+ScholarTrace is a student-built project aiming to promote transparency and fairness.
 
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
 
 ---
 
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+Developed by Sanat Gupta
