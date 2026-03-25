@@ -4,7 +4,6 @@
   "description": "Track and upload your coding edits for academic integrity. Professors can review your full coding timeline.",
   "version": "0.1.0",
   "publisher": "SanatGupta",
-  "icon": "icon.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/thesanatt/ScholarTrace"
