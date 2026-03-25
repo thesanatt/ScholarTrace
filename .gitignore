@@ -1,13 +1,17 @@
 # Node
 node_modules/
 .env
+.env.local
 dist/
 out/
+.next/
 .vscode-test/
 .vscode/
 
-# React build
+# Build artifacts
 build/
-
-# VSIX
 *.vsix
+
+# OS
+.DS_Store
+Thumbs.db
