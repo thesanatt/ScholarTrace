@@ -1,29 +1,45 @@
 {
   "name": "scholartrace",
   "displayName": "ScholarTrace",
-  "description": "",
-  "version": "0.1.0",
+  "description": "Track and upload your coding edits for academic integrity. Professors can review your full coding timeline.",
+  "version": "0.2.0",
   "publisher": "SanatGupta",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thesanatt/ScholarTrace"
+  },
   "engines": {
     "vscode": "^1.101.0"
   },
   "categories": [
+    "Education",
     "Other"
   ],
   "activationEvents": [
-    "onStartupFinished",
-    "onDidChangeTextDocument"
+    "onStartupFinished"
   ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "scholartrace.exportLog",
-        "title": "Export ScholarTrace Log"
+        "command": "scholartrace.sendLogsToServer",
+        "title": "ScholarTrace: Upload Snapshots"
       },
       {
-        "command": "scholartrace.sendLogsToServer",
-        "title": "Send Logs to Server"
+        "command": "scholartrace.exportLog",
+        "title": "ScholarTrace: Export Log as HTML"
+      },
+      {
+        "command": "scholartrace.clearLogs",
+        "title": "ScholarTrace: Clear Snapshots"
+      },
+      {
+        "command": "scholartrace.changeEmail",
+        "title": "ScholarTrace: Change Student Email"
+      },
+      {
+        "command": "scholartrace.changeClass",
+        "title": "ScholarTrace: Change Class Code"
       }
     ]
   },

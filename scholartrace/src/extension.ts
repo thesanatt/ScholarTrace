@@ -6,7 +6,7 @@ let logEntries: { timestamp: string; filename: string; content: string }[] = [];
 let statusBarItem: vscode.StatusBarItem;
 
 export function activate(context: vscode.ExtensionContext) {
-  // Status bar item — shows snapshot count, click to upload
+  // Status bar item
   statusBarItem = vscode.window.createStatusBarItem(
     vscode.StatusBarAlignment.Left,
     100
@@ -22,7 +22,6 @@ export function activate(context: vscode.ExtensionContext) {
 
   // Track file edits (debounced 5s)
   const listener = vscode.workspace.onDidChangeTextDocument((event) => {
-    // Ignore output channels, git, etc
     if (event.document.uri.scheme !== "file") return;
 
     const uri = event.document.uri.toString();
@@ -78,6 +77,51 @@ export function activate(context: vscode.ExtensionContext) {
         );
       }
 
+      // Get saved class code or ask for it
+      let classCode = context.globalState.get<string>(
+        "scholartrace.classCode"
+      );
+
+      if (!classCode) {
+        classCode = await vscode.window.showInputBox({
+          prompt: "Enter your class code (given by your professor)",
+          placeHolder: "e.g. A1B2C3",
+          validateInput: (value) =>
+            value.length >= 6 ? null : "Class code must be at least 6 characters",
+        });
+
+        if (!classCode) {
+          return;
+        }
+
+        // Verify the class code with the server
+        try {
+          const verifyRes = await fetch(
+            `${API_URL}/api/classes/verify/${classCode}`
+          );
+          if (!verifyRes.ok) {
+            vscode.window.showErrorMessage(
+              "ScholarTrace: Invalid class code. Check with your professor."
+            );
+            return;
+          }
+          const classInfo = (await verifyRes.json()) as { name: string; code: string };
+          await context.globalState.update(
+            "scholartrace.classCode",
+            classInfo.code
+          );
+          classCode = classInfo.code;
+          vscode.window.showInformationMessage(
+            `ScholarTrace: Joined "${classInfo.name}"`
+          );
+        } catch {
+          vscode.window.showErrorMessage(
+            "ScholarTrace: Could not verify class code. Check your internet connection."
+          );
+          return;
+        }
+      }
+
       // Upload with progress
       await vscode.window.withProgress(
         {
@@ -86,13 +130,19 @@ export function activate(context: vscode.ExtensionContext) {
           cancellable: false,
         },
         async (progress) => {
-          progress.report({ message: `Uploading ${logEntries.length} snapshots...` });
+          progress.report({
+            message: `Uploading ${logEntries.length} snapshots...`,
+          });
 
           try {
             const response = await fetch(`${API_URL}/api/logs/upload`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ studentEmail, logs: logEntries }),
+              body: JSON.stringify({
+                studentEmail,
+                logs: logEntries,
+                classCode,
+              }),
             });
 
             if (!response.ok) {
@@ -219,14 +269,50 @@ export function activate(context: vscode.ExtensionContext) {
   );
   context.subscriptions.push(changeEmailCommand);
 
+  // Command: Change class code
+  const changeClassCommand = vscode.commands.registerCommand(
+    "scholartrace.changeClass",
+    async () => {
+      const code = await vscode.window.showInputBox({
+        prompt: "Enter a new class code",
+        placeHolder: "e.g. A1B2C3",
+        validateInput: (value) =>
+          value.length >= 6 ? null : "Class code must be at least 6 characters",
+      });
+
+      if (!code) return;
+
+      try {
+        const res = await fetch(`${API_URL}/api/classes/verify/${code}`);
+        if (!res.ok) {
+          vscode.window.showErrorMessage(
+            "ScholarTrace: Invalid class code."
+          );
+          return;
+        }
+        const classInfo = (await res.json()) as { name: string; code: string };
+        await context.globalState.update(
+          "scholartrace.classCode",
+          classInfo.code
+        );
+        vscode.window.showInformationMessage(
+          `ScholarTrace: Switched to "${classInfo.name}"`
+        );
+      } catch {
+        vscode.window.showErrorMessage(
+          "ScholarTrace: Could not verify class code."
+        );
+      }
+    }
+  );
+  context.subscriptions.push(changeClassCommand);
+
   vscode.window.showInformationMessage("ScholarTrace is tracking your edits");
 }
 
 function updateStatusBar() {
   const count = logEntries.length;
   statusBarItem.text = `$(book) ScholarTrace: ${count} snapshot${count !== 1 ? "s" : ""}`;
-  statusBarItem.backgroundColor =
-    count > 0 ? undefined : undefined;
 }
 
 export function deactivate() {}

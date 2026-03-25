@@ -9,6 +9,13 @@ interface AuthResponse {
   };
 }
 
+interface ClassInfo {
+  id: string;
+  name: string;
+  code: string;
+  createdAt: string;
+}
+
 export function getToken(): string | null {
   if (typeof window === "undefined") return null;
   return localStorage.getItem("scholartrace_token");
@@ -69,13 +76,15 @@ export function logout(): void {
   localStorage.removeItem("scholartrace_professor");
 }
 
-async function authFetch(endpoint: string): Promise<Response> {
+async function authFetch(endpoint: string, options?: RequestInit): Promise<Response> {
   const token = getToken();
   if (!token) throw new Error("Not authenticated");
   const res = await fetch(`${API_URL}${endpoint}`, {
+    ...options,
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
+      ...options?.headers,
     },
   });
   if (res.status === 401) {
@@ -85,8 +94,29 @@ async function authFetch(endpoint: string): Promise<Response> {
   return res;
 }
 
-export async function getStudents(): Promise<string[]> {
-  const res = await authFetch("/api/logs/students");
+// Class API calls
+export async function createClass(name: string): Promise<ClassInfo> {
+  const res = await authFetch("/api/classes", {
+    method: "POST",
+    body: JSON.stringify({ name }),
+  });
+  if (!res.ok) throw new Error("Failed to create class");
+  return res.json();
+}
+
+export async function getClasses(): Promise<ClassInfo[]> {
+  const res = await authFetch("/api/classes");
+  if (!res.ok) throw new Error("Failed to fetch classes");
+  const data = await res.json();
+  return data.classes;
+}
+
+// Logs API calls
+export async function getStudents(classCode?: string): Promise<string[]> {
+  const endpoint = classCode
+    ? `/api/logs/students/${classCode}`
+    : "/api/logs/students";
+  const res = await authFetch(endpoint);
   if (!res.ok) throw new Error("Failed to fetch students");
   const data = await res.json();
   return data.students;
