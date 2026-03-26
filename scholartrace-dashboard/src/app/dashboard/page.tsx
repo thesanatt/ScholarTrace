@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getToken, getProfessor, logout, getClasses, createClass, getStudents, getStudentLogs } from "@/lib/api";
+import { getToken, getProfessor, logout, getClasses, createClass, getStudents, getStudentLogs, deleteClass, deleteStudentData } from "@/lib/api";
 
 interface ClassInfo {
   id: string;
@@ -36,6 +36,12 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [logsLoading, setLogsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+
+  // Delete modals
+  const [showDeleteClass, setShowDeleteClass] = useState(false);
+  const [deletingClass, setDeletingClass] = useState(false);
+  const [showDeleteStudent, setShowDeleteStudent] = useState<string | null>(null);
+  const [deletingStudent, setDeletingStudent] = useState(false);
 
   useEffect(() => {
     const token = getToken();
@@ -122,6 +128,44 @@ export default function DashboardPage() {
 
   function handleLogout() { logout(); router.push("/"); }
 
+  async function handleDeleteClass() {
+    if (!selectedClass) return;
+    setDeletingClass(true);
+    try {
+      await deleteClass(selectedClass.id);
+      const remaining = classes.filter((c) => c.id !== selectedClass.id);
+      setClasses(remaining);
+      setSelectedClass(remaining.length > 0 ? remaining[0] : null);
+      setSelectedStudent(null);
+      setSelectedSnapshot(null);
+      setSnapshots([]);
+      setShowDeleteClass(false);
+    } catch {
+      // handle error
+    } finally {
+      setDeletingClass(false);
+    }
+  }
+
+  async function handleDeleteStudent(email: string) {
+    if (!selectedClass) return;
+    setDeletingStudent(true);
+    try {
+      await deleteStudentData(email, selectedClass.code);
+      setStudents((prev) => prev.filter((s) => s !== email));
+      if (selectedStudent === email) {
+        setSelectedStudent(null);
+        setSelectedSnapshot(null);
+        setSnapshots([]);
+      }
+      setShowDeleteStudent(null);
+    } catch {
+      // handle error
+    } finally {
+      setDeletingStudent(false);
+    }
+  }
+
   function formatDate(iso: string) {
     return new Date(iso).toLocaleString("en-US", {
       month: "short", day: "numeric", hour: "numeric", minute: "2-digit", hour12: true,
@@ -198,6 +242,21 @@ export default function DashboardPage() {
             >
               + New class
             </button>
+            {selectedClass && (
+              <button
+                onClick={() => setShowDeleteClass(true)}
+                className="text-sm text-text-muted hover:text-danger cursor-pointer"
+                title="Delete this class"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="3 6 5 6 21 6" />
+                  <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                  <path d="M10 11v6" />
+                  <path d="M14 11v6" />
+                  <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+                </svg>
+              </button>
+            )}
           </div>
 
           <div className="flex items-center gap-4">
@@ -242,6 +301,66 @@ export default function DashboardPage() {
         </div>
       )}
 
+      {/* Delete class modal */}
+      {showDeleteClass && selectedClass && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+          <div className="bg-surface border border-border rounded-2xl p-6 w-full max-w-md">
+            <h2 className="text-lg font-semibold text-text-primary mb-2">Delete class</h2>
+            <p className="text-sm text-text-secondary mb-2">
+              Are you sure you want to delete <span className="font-semibold text-text-primary">{selectedClass.name}</span>?
+            </p>
+            <p className="text-xs text-danger/80 bg-danger/10 border border-danger/20 rounded-lg px-3 py-2 mb-4">
+              This will permanently delete all student logs associated with this class. This cannot be undone.
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => setShowDeleteClass(false)}
+                className="px-4 py-2 text-sm text-text-secondary hover:text-text-primary cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteClass}
+                disabled={deletingClass}
+                className="px-4 py-2 bg-danger hover:bg-danger/80 text-white text-sm font-medium rounded-xl disabled:opacity-50 cursor-pointer"
+              >
+                {deletingClass ? "Deleting..." : "Delete class"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete student data modal */}
+      {showDeleteStudent && selectedClass && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+          <div className="bg-surface border border-border rounded-2xl p-6 w-full max-w-md">
+            <h2 className="text-lg font-semibold text-text-primary mb-2">Remove student data</h2>
+            <p className="text-sm text-text-secondary mb-2">
+              Remove all logs for <span className="font-mono text-accent">{showDeleteStudent}</span> from <span className="font-semibold text-text-primary">{selectedClass.name}</span>?
+            </p>
+            <p className="text-xs text-danger/80 bg-danger/10 border border-danger/20 rounded-lg px-3 py-2 mb-4">
+              This will permanently delete all coding snapshots for this student in this class. This cannot be undone.
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => setShowDeleteStudent(null)}
+                className="px-4 py-2 text-sm text-text-secondary hover:text-text-primary cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleDeleteStudent(showDeleteStudent)}
+                disabled={deletingStudent}
+                className="px-4 py-2 bg-danger hover:bg-danger/80 text-white text-sm font-medium rounded-xl disabled:opacity-50 cursor-pointer"
+              >
+                {deletingStudent ? "Removing..." : "Remove data"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="flex-1 flex max-w-[1400px] mx-auto w-full">
         <aside className="w-72 border-r border-border p-4 flex flex-col gap-3">
           <div className="mb-2">
@@ -268,13 +387,28 @@ export default function DashboardPage() {
               </div>
             ) : (
               filteredStudents.map((email) => (
-                <button key={email} onClick={() => selectStudent(email)}
-                  className={`w-full text-left px-3 py-2.5 rounded-lg text-sm truncate cursor-pointer ${
+                <div key={email} className={`group flex items-center rounded-lg ${
                     selectedStudent === email
-                      ? "bg-accent/15 text-accent border border-accent/30"
-                      : "text-text-secondary hover:bg-surface-hover hover:text-text-primary border border-transparent"
+                      ? "bg-accent/15 border border-accent/30"
+                      : "hover:bg-surface-hover border border-transparent"
                   }`}
-                >{email}</button>
+                >
+                  <button onClick={() => selectStudent(email)}
+                    className={`flex-1 text-left px-3 py-2.5 text-sm truncate cursor-pointer ${
+                      selectedStudent === email ? "text-accent" : "text-text-secondary hover:text-text-primary"
+                    }`}
+                  >{email}</button>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setShowDeleteStudent(email); }}
+                    className="opacity-0 group-hover:opacity-100 px-2 py-1 mr-1 text-text-muted hover:text-danger cursor-pointer"
+                    title="Remove student data"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="3 6 5 6 21 6" />
+                      <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                    </svg>
+                  </button>
+                </div>
               ))
             )}
           </div>

@@ -129,3 +129,23 @@ export async function getStudentLogs(email: string): Promise<any[]> {
   const data = await res.json();
   return data.logs;
 }
+
+// Delete a class and all its logs
+export async function deleteClass(classId: string): Promise<{ logsDeleted: number }> {
+  const res = await authFetch(`/api/classes/${classId}`, { method: "DELETE" });
+  if (!res.ok) {
+    const error = await res.json();
+    throw new Error(error.error || "Failed to delete class");
+  }
+  return res.json();
+}
+
+// Delete a student's logs from a specific class
+export async function deleteStudentData(email: string, classCode: string): Promise<{ deletedCount: number }> {
+  const res = await authFetch(`/api/logs/student/${encodeURIComponent(email)}/${classCode}`, { method: "DELETE" });
+  if (!res.ok) {
+    const error = await res.json();
+    throw new Error(error.error || "Failed to delete student data");
+  }
+  return res.json();
+}

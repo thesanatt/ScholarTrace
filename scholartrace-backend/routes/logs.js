@@ -118,4 +118,32 @@ router.get('/:email', auth, async (req, res) => {
   }
 });
 
+// DELETE /api/logs/student/:email/:classCode — remove a student's logs from a class (auth required)
+router.delete('/student/:email/:classCode', auth, async (req, res) => {
+  try {
+    // Verify professor owns this class
+    const classDoc = await Class.findOne({
+      code: req.params.classCode.toUpperCase(),
+      professor: req.professor.id
+    });
+
+    if (!classDoc) {
+      return res.status(403).json({ error: 'Not your class or invalid code' });
+    }
+
+    const result = await LogEntry.deleteMany({
+      studentEmail: req.params.email,
+      classCode: classDoc.code
+    });
+
+    res.json({
+      message: `Deleted ${result.deletedCount} log entries for ${req.params.email}`,
+      deletedCount: result.deletedCount
+    });
+  } catch (err) {
+    console.error('Delete student logs error:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 module.exports = router;
