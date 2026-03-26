@@ -85,7 +85,7 @@ REGISTER_RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "${API_URL}/api/auth/reg
   -H "Content-Type: application/json" \
   -d "{\"name\": \"${TEST_NAME}\", \"email\": \"${TEST_EMAIL}\", \"password\": \"${TEST_PASSWORD}\"}")
 
-REGISTER_BODY=$(echo "$REGISTER_RESPONSE" | head -n -1)
+REGISTER_BODY=$(echo "$REGISTER_RESPONSE" | sed '$d')
 REGISTER_STATUS=$(echo "$REGISTER_RESPONSE" | tail -n 1)
 
 assert_status "Register returns 201" "201" "$REGISTER_STATUS"
@@ -123,7 +123,7 @@ LOGIN_RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "${API_URL}/api/auth/login"
   -H "Content-Type: application/json" \
   -d "{\"email\": \"${TEST_EMAIL}\", \"password\": \"${TEST_PASSWORD}\"}")
 
-LOGIN_BODY=$(echo "$LOGIN_RESPONSE" | head -n -1)
+LOGIN_BODY=$(echo "$LOGIN_RESPONSE" | sed '$d')
 LOGIN_STATUS=$(echo "$LOGIN_RESPONSE" | tail -n 1)
 
 assert_status "Login returns 200" "200" "$LOGIN_STATUS"
@@ -155,7 +155,7 @@ CLASS_RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "${API_URL}/api/classes" \
   -H "Authorization: Bearer ${TOKEN}" \
   -d "{\"name\": \"EECS 281 Test ${TIMESTAMP}\"}")
 
-CLASS_BODY=$(echo "$CLASS_RESPONSE" | head -n -1)
+CLASS_BODY=$(echo "$CLASS_RESPONSE" | sed '$d')
 CLASS_STATUS=$(echo "$CLASS_RESPONSE" | tail -n 1)
 
 assert_status "Create class returns 201" "201" "$CLASS_STATUS"
@@ -174,7 +174,7 @@ echo ""
 echo -e "${CYAN}[6] Verify class code (public)${NC}"
 
 VERIFY_RESPONSE=$(curl -s -w "\n%{http_code}" "${API_URL}/api/classes/verify/${CLASS_CODE}")
-VERIFY_BODY=$(echo "$VERIFY_RESPONSE" | head -n -1)
+VERIFY_BODY=$(echo "$VERIFY_RESPONSE" | sed '$d')
 VERIFY_STATUS=$(echo "$VERIFY_RESPONSE" | tail -n 1)
 
 assert_status "Verify returns 200" "200" "$VERIFY_STATUS"
@@ -207,7 +207,7 @@ UPLOAD_RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "${API_URL}/api/logs/uploa
     ]
   }")
 
-UPLOAD_BODY=$(echo "$UPLOAD_RESPONSE" | head -n -1)
+UPLOAD_BODY=$(echo "$UPLOAD_RESPONSE" | sed '$d')
 UPLOAD_STATUS=$(echo "$UPLOAD_RESPONSE" | tail -n 1)
 
 assert_status "Upload logs returns 201" "201" "$UPLOAD_STATUS"
@@ -222,7 +222,7 @@ echo -e "${CYAN}[9] List professor's classes${NC}"
 LIST_CLASSES=$(curl -s -w "\n%{http_code}" "${API_URL}/api/classes" \
   -H "Authorization: Bearer ${TOKEN}")
 
-LIST_CLASSES_BODY=$(echo "$LIST_CLASSES" | head -n -1)
+LIST_CLASSES_BODY=$(echo "$LIST_CLASSES" | sed '$d')
 LIST_CLASSES_STATUS=$(echo "$LIST_CLASSES" | tail -n 1)
 
 assert_status "List classes returns 200" "200" "$LIST_CLASSES_STATUS"
@@ -237,7 +237,7 @@ echo -e "${CYAN}[10] List students in class${NC}"
 STUDENTS_RESPONSE=$(curl -s -w "\n%{http_code}" "${API_URL}/api/logs/students/${CLASS_CODE}" \
   -H "Authorization: Bearer ${TOKEN}")
 
-STUDENTS_BODY=$(echo "$STUDENTS_RESPONSE" | head -n -1)
+STUDENTS_BODY=$(echo "$STUDENTS_RESPONSE" | sed '$d')
 STUDENTS_STATUS=$(echo "$STUDENTS_RESPONSE" | tail -n 1)
 
 assert_status "List students returns 200" "200" "$STUDENTS_STATUS"
@@ -252,7 +252,7 @@ echo -e "${CYAN}[11] Get student logs${NC}"
 LOGS_RESPONSE=$(curl -s -w "\n%{http_code}" "${API_URL}/api/logs/${STUDENT_EMAIL}" \
   -H "Authorization: Bearer ${TOKEN}")
 
-LOGS_BODY=$(echo "$LOGS_RESPONSE" | head -n -1)
+LOGS_BODY=$(echo "$LOGS_RESPONSE" | sed '$d')
 LOGS_STATUS=$(echo "$LOGS_RESPONSE" | tail -n 1)
 
 assert_status "Get logs returns 200" "200" "$LOGS_STATUS"
@@ -282,7 +282,7 @@ DEL_STUDENT_RESPONSE=$(curl -s -w "\n%{http_code}" -X DELETE \
   "${API_URL}/api/logs/student/${STUDENT_EMAIL}/${CLASS_CODE}" \
   -H "Authorization: Bearer ${TOKEN}")
 
-DEL_STUDENT_BODY=$(echo "$DEL_STUDENT_RESPONSE" | head -n -1)
+DEL_STUDENT_BODY=$(echo "$DEL_STUDENT_RESPONSE" | sed '$d')
 DEL_STUDENT_STATUS=$(echo "$DEL_STUDENT_RESPONSE" | tail -n 1)
 
 assert_status "Delete student data returns 200" "200" "$DEL_STUDENT_STATUS"
@@ -312,7 +312,7 @@ DEL_CLASS_RESPONSE=$(curl -s -w "\n%{http_code}" -X DELETE \
   "${API_URL}/api/classes/${CLASS_ID}" \
   -H "Authorization: Bearer ${TOKEN}")
 
-DEL_CLASS_BODY=$(echo "$DEL_CLASS_RESPONSE" | head -n -1)
+DEL_CLASS_BODY=$(echo "$DEL_CLASS_RESPONSE" | sed '$d')
 DEL_CLASS_STATUS=$(echo "$DEL_CLASS_RESPONSE" | tail -n 1)
 
 assert_status "Delete class returns 200" "200" "$DEL_CLASS_STATUS"
