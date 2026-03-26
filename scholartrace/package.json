@@ -20,6 +20,24 @@
   ],
   "main": "./out/extension.js",
   "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "scholartrace",
+          "title": "ScholarTrace",
+          "icon": "$(book)"
+        }
+      ]
+    },
+    "views": {
+      "scholartrace": [
+        {
+          "type": "webview",
+          "id": "scholartrace.sidebar",
+          "name": "ScholarTrace"
+        }
+      ]
+    },
     "commands": [
       {
         "command": "scholartrace.sendLogsToServer",
