@@ -2,7 +2,7 @@
   "name": "scholartrace",
   "displayName": "ScholarTrace",
   "description": "Track and upload your coding edits for academic integrity. Professors can review your full coding timeline.",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "publisher": "SanatGupta",
   "repository": {
     "type": "git",
