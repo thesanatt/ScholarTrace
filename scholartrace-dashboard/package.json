@@ -1,61 +1,24 @@
 {
-  "name": "scholartrace",
-  "displayName": "ScholarTrace",
-  "description": "Track and upload your coding edits for academic integrity. Professors can review your full coding timeline.",
+  "name": "scholartrace-dashboard",
   "version": "0.1.0",
-  "publisher": "SanatGupta",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/thesanatt/ScholarTrace"
-  },
-  "engines": {
-    "vscode": "^1.101.0"
-  },
-  "categories": [
-    "Education",
-    "Other"
-  ],
-  "activationEvents": [
-    "onStartupFinished"
-  ],
-  "main": "./out/extension.js",
-  "contributes": {
-    "commands": [
-      {
-        "command": "scholartrace.sendLogsToServer",
-        "title": "ScholarTrace: Upload Snapshots"
-      },
-      {
-        "command": "scholartrace.exportLog",
-        "title": "ScholarTrace: Export Log as HTML"
-      },
-      {
-        "command": "scholartrace.clearLogs",
-        "title": "ScholarTrace: Clear Snapshots"
-      },
-      {
-        "command": "scholartrace.changeEmail",
-        "title": "ScholarTrace: Change Student Email"
-      }
-    ]
-  },
+  "private": true,
   "scripts": {
-    "vscode:prepublish": "npm run compile",
-    "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
-    "pretest": "npm run compile && npm run lint",
-    "lint": "eslint src",
-    "test": "vscode-test"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "next": "^16.2.1",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
   },
   "devDependencies": {
-    "@types/vscode": "^1.101.0",
-    "@types/mocha": "^10.0.10",
-    "@types/node": "20.x",
-    "@typescript-eslint/eslint-plugin": "^8.31.1",
-    "@typescript-eslint/parser": "^8.31.1",
-    "eslint": "^9.25.1",
-    "typescript": "^5.8.3",
-    "@vscode/test-cli": "^0.0.10",
-    "@vscode/test-electron": "^2.5.2"
+    "@tailwindcss/postcss": "^4.1.4",
+    "@types/node": "^22.15.3",
+    "@types/react": "^19.1.2",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^4.1.4",
+    "typescript": "^5.8.3"
   }
 }
