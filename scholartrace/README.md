@@ -1,52 +1,51 @@
-# 📘 ScholarTrace
+# ScholarTrace
 
-ScholarTrace is a VS Code extension designed to help students transparently track their coding progress and submit logs to professors, ensuring academic integrity and protecting against false accusations.
+A VS Code extension that builds a tamper-proof timeline of your coding process. Every edit is automatically snapshotted and can be uploaded for professor review — so if your work is ever questioned, you have the receipts.
 
-## ✨ Features
+## How it works
 
-- ⏱️ Automatically logs file changes after brief pauses
-- 💾 Locally stores code change history with timestamps
-- 📤 Sends log history to a secure backend for professor access
-- 📄 Export logs to a nicely formatted HTML file
-- 🔐 Professors can securely view and filter student logs via a web dashboard
+1. Install ScholarTrace and open any project
+2. Code normally — the extension silently snapshots your files after 5 seconds of inactivity
+3. When you're ready, enter your email and your professor's class code
+4. Hit upload — your snapshots are pushed to a secure server where your professor can review your full coding timeline
 
-## 🎓 Why ScholarTrace?
+That's it. No configuration, no setup beyond the initial email and class code.
 
-Students often face the risk of academic dishonesty accusations due to lack of evidence for their independent work. ScholarTrace helps prevent this by logging your code evolution and optionally submitting it securely for verification.
+## What professors see
 
-## 🛠 How It Works
+Professors create classes on the [ScholarTrace Dashboard](https://scholar-trace.vercel.app) and get a unique 6-character join code to share with students. From the dashboard they can:
 
-1. **Install the extension in VS Code**
-2. **Start coding normally**
-3. **Logs will be saved automatically after pauses (5 seconds default)**
-4. Use `ScholarTrace: Export ScholarTrace Log` to export your work
-5. Use `ScholarTrace: Send Logs to Server` to upload for review
+- View every student's coding timeline in chronological order
+- See exactly how code evolved — what was written, when, and in what order
+- Search and filter students across classes
+- Export or remove student data as needed
 
-## 🧪 Commands
+## Commands
 
-| Command                              | Description                           |
-|--------------------------------------|---------------------------------------|
-| `ScholarTrace: Export ScholarTrace Log` | Save logs to an HTML file             |
-| `ScholarTrace: Send Logs to Server` | Upload logs with student email input  |
+| Command | What it does |
+|---|---|
+| `ScholarTrace: Upload Snapshots` | Push your captured snapshots to the server |
+| `ScholarTrace: Export Log as HTML` | Save a local HTML report of your coding timeline |
+| `ScholarTrace: Clear Snapshots` | Clear all captured snapshots from this session |
+| `ScholarTrace: Change Student Email` | Update your student email |
+| `ScholarTrace: Change Class Code` | Switch to a different class |
 
-## 📦 Requirements
+All commands are also accessible from the ScholarTrace sidebar panel.
 
-- VS Code 1.101.0 or higher
-- Internet connection to use the log upload feature
+## Privacy
 
-## 🔒 Privacy
+ScholarTrace only captures snapshots of files you edit in VS Code. All data stays local on your machine until you explicitly choose to upload. No telemetry, no background data collection.
 
-Your logs are stored locally unless you choose to upload them to your institution's ScholarTrace backend. No data is collected without your explicit consent.
+## Requirements
 
-## 🧑‍🏫 For Professors
+- VS Code 1.101.0+
+- Internet connection for uploading snapshots
 
-Visit the ScholarTrace dashboard to view logs by student email, search content, and export records.
+## Links
 
-## 📤 Open Source & Contributions
-
-ScholarTrace is a student-built project aiming to promote transparency and fairness.
-
+- [Professor Dashboard](https://scholar-trace.vercel.app)
+- [Source Code](https://github.com/thesanatt/ScholarTrace)
 
 ---
 
-Developed by Sanat Gupta
+Built by [Sanat Gupta](https://thesanatgupta.com)
